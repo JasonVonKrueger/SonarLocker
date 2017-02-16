@@ -1,0 +1,1 @@
+Walk away from your computer and trigger the lock screen.
