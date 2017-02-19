@@ -129,19 +129,30 @@ namespace SonarLocker
                     // see if data has been sent
                     if (IO.BytesToRead == 0)
                     {
-                        string message = IO.ReadLine();
-                        
-                        // start screen saver if TRIG is received
-                        if (message.Contains("TRIG"))
+                        try
                         {
-                            ProcessStartInfo startInfo = new ProcessStartInfo("rundll32.exe");
-                            startInfo.Arguments = "user32.dll, LockWorkStation";
-                            Process.Start(startInfo);
+                            string message = IO.ReadLine();
+
+                            // start screen saver if TRIG is received
+                            if (message.Contains("TRIG"))
+                            {
+                                ProcessStartInfo startInfo = new ProcessStartInfo("rundll32.exe");
+                                startInfo.Arguments = "user32.dll, LockWorkStation";
+                                Process.Start(startInfo);
+                            }
+                        }
+                        catch (System.UnauthorizedAccessException)
+                        {
+                            // can't read from port.
+                            _continue = false;
+
+                            MessageBox.Show("Can't read from port. Either the device was unplugged or power save turned off the USB port.", "App Exit");
+                            Application.Exit();                            
                         }
                     }
                 }
                 catch (TimeoutException)
-                { }
+                { }                
             }
         }
 
